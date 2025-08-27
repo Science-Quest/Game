@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --color-primary: #42BFFF;
+  --color-accent: #EF661D;
+  --color-success: #31BC31;
+  --color-background: #F5FBFF;
+  --color-dark: #064463;
+  --color-light: #E1F2F4;
+  --color-game-result-background: #5BC8FF
+}
+
+html,
+body {
+  @apply bg-primary text-dark font-sans font-medium;
+
+  @media (prefers-color-scheme: dark) {
+    color-scheme: dark;
+  }
+
+  
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-weight: 400;
+  font-style: normal;
+  src: url('/assets/fonts/poppins.regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-weight: 500;
+  font-style: normal;
+  src: url('/assets/fonts/poppins.medium.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-weight: 600;
+  font-style: normal;
+  src: url('/assets/fonts/poppins.semibold.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-weight: 700;
+  font-style: normal;
+  src: url('/assets/fonts/poppins.bold.woff2') format('woff2');
+}
