@@ -24,7 +24,7 @@ export default function ResultPage({gameStats}) {
                     :
                         <h1 className="font-bold text-3xl">KAMU GAGAL !!!</h1>
                 }
-                <img src="/assets/trophy.png" alt="Big Trophy" width={235} height={212} />
+                <img src="/images/trophy.png" alt="Big Trophy" width={235} height={212} />
                 <hr className="bg-light h-2 w-full" />
                 <div id="result-detail" className="flex flex-col gap-y-8 w-[95%]">
                     <div className="flex flex-row justify-between w-full font-bold text-xl">

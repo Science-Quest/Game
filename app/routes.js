@@ -4,7 +4,7 @@ export default [
     ...prefix(
         'games',
         [
-            route('box-recall', "games/box-recall/App.jsx"),
+            route('box-recall/:level', "games/box-recall/root.jsx"),
             route('penguin-dash', "games/penguin-dash/App.jsx"),
             route('connect-things', "games/connect-things/App.jsx"),
             // route('bomb-road', "games/bomb-road/App.jsx"),

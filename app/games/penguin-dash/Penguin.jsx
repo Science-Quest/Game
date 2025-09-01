@@ -34,7 +34,7 @@ const Penguin = memo(({ position, className }) => {
             <motion.div
                 animate={controls}
                 // IMPORTANT: No Tailwind transform utilities on this element.
-                className="absolute w-16 h-16 z-50 bg-[url(/assets/penguin-dash/penguin.png)] bg-contain bg-no-repeat"
+                className="absolute w-16 h-16 z-50 bg-[url(/images/penguin-dash/penguin.png)] bg-contain bg-no-repeat"
                 style={{ willChange: "transform" }}
             />
         </div>

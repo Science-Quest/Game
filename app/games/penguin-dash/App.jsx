@@ -164,7 +164,7 @@ export default function App () {
                     level.questions[activeQuestion].question
                 }
             </div>
-            <img src="/assets/penguin-dash/ice-wall.png" alt="Ice Wall" className="w-full h-40" />
+            <img src="/images/penguin-dash/ice-wall.png" alt="Ice Wall" className="w-full h-40" />
             <div id="sea" ref={gridRef} className="relative z-10 flex flex-col-reverse gap-y-12 items-center max-w-[600px] mx-auto">
                 {
                     (penguinPosition.x === 0 && penguinPosition.y === 0) ?
@@ -185,7 +185,7 @@ export default function App () {
                     )
                 }
                 <div className="h-[82px] max-w-[600px] w-full">
-                    <img src="/assets/penguin-dash/finish-line.png" alt="Finish line" className="w-full" />
+                    <img src="/images/penguin-dash/finish-line.png" alt="Finish line" className="w-full" />
                 </div>
                 <FinishPlace 
                     handleClick={() => {

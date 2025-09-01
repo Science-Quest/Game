@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react"
+import { motion } from "motion/react"
+import { Howl } from "howler"
 
 const GRID_CONFIG = {
     boxSize: 72,
@@ -8,10 +10,17 @@ const GRID_CONFIG = {
 }
 
 export default function GameGrid({level, phase, setSelectedBoxes, currentSelectedBoxes}) {
+
+    if (!level) {
+        return <p>Loading...</p>
+    }
+
     const {
         arenaSize,
         targets
     }  = level
+
+    
 
     const [selectQuota, setSelectQuota] = useState(level.targets.length)
 
@@ -26,7 +35,7 @@ export default function GameGrid({level, phase, setSelectedBoxes, currentSelecte
         setSelectQuota(level.targets.length - currentSelectedBoxes.length)
     }, [currentSelectedBoxes])
 
-
+    
     return(
         <div id="grid" className={`grid grid-cols-${arenaSize} grid-rows-${arenaSize}`} style={{gap: GRID_CONFIG.gap}}>
             {
@@ -54,9 +63,16 @@ export default function GameGrid({level, phase, setSelectedBoxes, currentSelecte
 
 function Box({handleBoxCLicked, position, isTarget, selectable, clickable}) {
     const [isSelected, setIsSelected] = useState(false)
+    const [pulse, setPulse] = useState(false);
+
+    const selectSound = new Howl({src: '/sounds/select-pop.mp3'})
+    const unselectSound = new Howl({src: '/sounds/cancel-selection-pop.mp3'})
 
     return(
-        <div 
+        <motion.div 
+            animate={pulse ? { scale: [1, 1.15, 1] } : { scale: 1 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            onAnimationComplete={() => setPulse(false)} // reset after pulse
             style={{ 
                 width: GRID_CONFIG.boxSize, 
                 height: GRID_CONFIG.boxSize, 
@@ -70,16 +86,19 @@ function Box({handleBoxCLicked, position, isTarget, selectable, clickable}) {
                     !isSelected && selectable ? 
                     () => {
                         setIsSelected(true)
+                        setPulse(true)
                         handleBoxCLicked.selectBox(position)
+                        selectSound.play()
                     }
                     :
                         () => {
                             setIsSelected(false)
                             handleBoxCLicked.unselectBox(position)
+                            unselectSound.play()
                         }
                 }
             
-        ></div>
+        ></motion.div>
     )
     
 }

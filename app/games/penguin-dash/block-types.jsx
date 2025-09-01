@@ -66,7 +66,7 @@ const OptionButton = (props) => {
         <div 
             className="relative flex justify-center items-center w-[159px] h-[82px] bg-cover"
             style={{
-                backgroundImage: `url(/assets/penguin-dash/ice-type-${iceType.current}.png)`
+                backgroundImage: `url(/images/penguin-dash/ice-type-${iceType.current}.png)`
             }} 
             onClick={isActive ? () => handleOptionButtonClick(row, col, optionsLength) : null}
         >
@@ -87,7 +87,7 @@ const FinishPlace = ({handleClick, isFinish}) => {
     return(
         <div id="finish-place" className="relative flex justify-center items-center w-full max-w-[600px]" onClick={isFinish? handleClick : null}>
             <OptionButton option={null} />
-            <img src="/assets/penguin-dash/finish-flag.png" alt="Finish flag" className="absolute -top-12 left-1/2 w-[72px] h-[100px]" />
+            <img src="/images/penguin-dash/finish-flag.png" alt="Finish flag" className="absolute -top-12 left-1/2 w-[72px] h-[100px]" />
         </div>
     )
 }
