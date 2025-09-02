@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react"
 import { OptionGroup, StartPlace, FinishPlace } from "./block-types"
 import Penguin from "./Penguin"
-import ResultNotification from "./ResultNotification"
-import ResultPage from "./ResultPage"
+import ResultNotification from "../../components/ResultNotification"
+import ResultPage from "../../components/ResultPage"
 import { useTimer } from "../../utilities/timer"
 
 const levels = [
@@ -144,7 +144,7 @@ export default function App () {
     }
 
     if (showResultPage) {
-        return <ResultPage gameStats={gameStats}/>
+        return <ResultPage questName={'Penguin Dash'} gameStats={gameStats}/>
     } 
     return (
         <div>

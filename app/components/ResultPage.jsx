@@ -1,5 +1,5 @@
 import { LucideRefreshCcw, LucideArrowBigRight } from "lucide-react"
-
+import TimeDisplay from "./TimeDisplay"
 
 export default function ResultPage({gameStats}) {
     const {
@@ -29,7 +29,7 @@ export default function ResultPage({gameStats}) {
                 <div id="result-detail" className="flex flex-col gap-y-8 w-[95%]">
                     <div className="flex flex-row justify-between w-full font-bold text-xl">
                         <p>QUEST</p>
-                        <p>Penguin Dash</p>
+                        <p>Box Recall</p>
                     </div>
                     <div className="flex flex-row justify-between w-full font-bold text-xl">
                         <p>LEVEL</p>
@@ -37,7 +37,7 @@ export default function ResultPage({gameStats}) {
                     </div>
                     <div className="flex flex-row justify-between w-full font-bold text-xl">
                         <p>WAKTU</p>
-                        <p>{time}s</p>
+                        <TimeDisplay seconds={time}/>
                     </div>
                     <div className="flex flex-row justify-between w-full font-bold text-xl">
                         <p>TEPAT</p>

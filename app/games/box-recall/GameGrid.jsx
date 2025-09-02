@@ -20,8 +20,6 @@ export default function GameGrid({level, phase, setSelectedBoxes, currentSelecte
         targets
     }  = level
 
-    
-
     const [selectQuota, setSelectQuota] = useState(level.targets.length)
 
     const unselectBox = (position) => {
@@ -37,8 +35,16 @@ export default function GameGrid({level, phase, setSelectedBoxes, currentSelecte
 
     
     return(
-        <div id="grid" className={`grid grid-cols-${arenaSize} grid-rows-${arenaSize}`} style={{gap: GRID_CONFIG.gap}}>
-            {
+        <div 
+            id="grid"  
+            className={`grid`}
+            style={{
+                gap: GRID_CONFIG.gap,
+                gridTemplateColumns: `repeat(${arenaSize}, ${GRID_CONFIG.boxSize}px)`,
+                gridTemplateRows: `repeat(${arenaSize}, ${GRID_CONFIG.boxSize}px)`
+            }}
+        >
+            {   
                 [...Array(arenaSize)].map((_, i) => {
                     const row = i
                     return (
