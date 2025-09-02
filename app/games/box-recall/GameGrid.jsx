@@ -4,7 +4,7 @@ import { Howl } from "howler"
 
 const GRID_CONFIG = {
     boxSize: 72,
-    gap: 10,
+    gap: 6,
     targetBoxFillColor: '#FFEA00',
     inactiveBoxFillColor: '#064463'
 }
@@ -40,8 +40,10 @@ export default function GameGrid({level, phase, setSelectedBoxes, currentSelecte
             className={`grid`}
             style={{
                 gap: GRID_CONFIG.gap,
-                gridTemplateColumns: `repeat(${arenaSize}, ${GRID_CONFIG.boxSize}px)`,
-                gridTemplateRows: `repeat(${arenaSize}, ${GRID_CONFIG.boxSize}px)`
+                gridTemplateColumns: `repeat(${arenaSize}, minmax(0, 1fr))`,
+                gridTemplateRows: `repeat(${arenaSize}, minmax(0, 1fr))`,
+                width: "90vw",
+                maxWidth: "500px"
             }}
         >
             {   
@@ -80,11 +82,9 @@ function Box({handleBoxCLicked, position, isTarget, selectable, clickable}) {
             transition={{ duration: 0.4, ease: "easeOut" }}
             onAnimationComplete={() => setPulse(false)} // reset after pulse
             style={{ 
-                width: GRID_CONFIG.boxSize, 
-                height: GRID_CONFIG.boxSize, 
-                backgroundColor: (isSelected || isTarget) ? GRID_CONFIG.targetBoxFillColor : GRID_CONFIG.inactiveBoxFillColor 
+                backgroundColor: (isSelected || isTarget) ? GRID_CONFIG.targetBoxFillColor : GRID_CONFIG.inactiveBoxFillColor,
             }} 
-            className="rounded-lg"
+            className="aspect-square rounded-lg"
             onClick={
                 !clickable ?
                 null
@@ -103,7 +103,6 @@ function Box({handleBoxCLicked, position, isTarget, selectable, clickable}) {
                             unselectSound.play()
                         }
                 }
-            
         ></motion.div>
     )
     
