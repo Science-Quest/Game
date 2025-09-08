@@ -320,7 +320,7 @@ const levels = [
     }
 ]
 
-export default function App({ params }) {
+export default function BoxRecallApp( params ) {
     const level = params.level
 
     const timer = useTimer()

@@ -10,6 +10,7 @@ const levels = [
         "level": 1,
         "questions": [
             { "question": "2 + 3 = ...", "options": [5, 6], "answer": 5 },
+            { "question": "7 - 4 = ...", "options": [2, 3, 5], "answer": 3 },
             { "question": "7 - 4 = ...", "options": [2, 3, 5], "answer": 3 }
         ]
     },
@@ -186,7 +187,10 @@ const levels = [
 ]
 
 
-export default function App({ params }) {
+export default function PenguinDashApp(params) {
+
+    const penguinJumpSound = useRef(new Howl({src: '/sounds/jump.mp3'}))
+
     const levelParam = params.level
 
     const levelNumber = parseInt(levelParam, 10)
@@ -237,6 +241,9 @@ export default function App({ params }) {
     }, [result.isFinish])
 
     const handleOptionButtonClick = (rowIndex, colIndex, optionsLength) => {
+
+        penguinJumpSound.current.play()
+
         setActiveQuestion(activeQuestion + 1)
         setSelectedOption(level.questions[rowIndex].options[colIndex])
 

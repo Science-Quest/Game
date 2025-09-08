@@ -7,8 +7,7 @@ import ResultNotification from "../../components/ResultNotification"
 import QuitNotification from "../../components/QuitNotification"
 import GameGrid from "./GameGrid"
 
-export default function App({ params }) {
-    const level = params.level
+export default function ConnectThingsApp({ level }) {
 
     const timer = useTimer()
 
@@ -71,7 +70,7 @@ export default function App({ params }) {
 
                 <p className="font-bold text-center text-xl mb-12">
                     {phase === "do"
-                        ? "Hubungkan pasangan gambar yang sama tanpa jalur saling tumpang tindih"
+                        ? "Pasangkan gambar yang sama"
                         : "Permainan selesai"}
                 </p>
 
@@ -81,102 +80,104 @@ export default function App({ params }) {
     )
 }
 
+
+
 const levels = [
     // --- 4x4 Levels ---
     {
         level: 1,
         size: 4,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 0 }, { row: 0, col: 3 }] },
-            { id: "B", positions: [{ row: 1, col: 1 }, { row: 3, col: 1 }] },
-            { id: "C", positions: [{ row: 2, col: 2 }, { row: 3, col: 3 }] },
+            { id: "🍎", positions: [{ row: 0, col: 0 }, { row: 0, col: 3 }] },
+            { id: "🍈", positions: [{ row: 1, col: 1 }, { row: 3, col: 1 }] },
+            { id: "🍌", positions: [{ row: 2, col: 2 }, { row: 3, col: 3 }] },
         ],
     },
     {
         level: 2,
         size: 4,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 0 }, { row: 3, col: 0 }] },
-            { id: "B", positions: [{ row: 0, col: 1 }, { row: 3, col: 1 }] },
-            { id: "C", positions: [{ row: 0, col: 2 }, { row: 3, col: 2 }] },
-            { id: "D", positions: [{ row: 0, col: 3 }, { row: 3, col: 3 }] },
+            { id: "🍎", positions: [{ row: 0, col: 0 }, { row: 3, col: 0 }] },
+            { id: "🍈", positions: [{ row: 0, col: 1 }, { row: 3, col: 1 }] },
+            { id: "🍌", positions: [{ row: 0, col: 2 }, { row: 3, col: 2 }] },
+            { id: "🍇", positions: [{ row: 0, col: 3 }, { row: 3, col: 3 }] },
         ],
     },
     {
         level: 3,
         size: 4,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 0 }, { row: 2, col: 0 }] },
-            { id: "B", positions: [{ row: 1, col: 3 }, { row: 3, col: 3 }] },
-            { id: "C", positions: [{ row: 3, col: 0 }, { row: 3, col: 2 }] },
+            { id: "🍎", positions: [{ row: 0, col: 0 }, { row: 2, col: 0 }] },
+            { id: "🍈", positions: [{ row: 1, col: 3 }, { row: 3, col: 3 }] },
+            { id: "🍌", positions: [{ row: 3, col: 0 }, { row: 3, col: 2 }] },
         ],
     },
     {
         level: 4,
         size: 4,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 0 }, { row: 0, col: 3 }] },
-            { id: "B", positions: [{ row: 1, col: 1 }, { row: 1, col: 2 }] },
-            { id: "C", positions: [{ row: 2, col: 0 }, { row: 3, col: 0 }] },
-            { id: "D", positions: [{ row: 2, col: 3 }, { row: 3, col: 3 }] },
+            { id: "🍎", positions: [{ row: 0, col: 0 }, { row: 0, col: 3 }] },
+            { id: "🍈", positions: [{ row: 1, col: 1 }, { row: 1, col: 2 }] },
+            { id: "🍌", positions: [{ row: 2, col: 0 }, { row: 3, col: 0 }] },
+            { id: "🍇", positions: [{ row: 2, col: 3 }, { row: 3, col: 3 }] },
         ],
     },
     {
         level: 5,
         size: 4,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 0 }, { row: 1, col: 1 }] },
-            { id: "B", positions: [{ row: 0, col: 3 }, { row: 1, col: 2 }] },
-            { id: "C", positions: [{ row: 2, col: 0 }, { row: 3, col: 1 }] },
-            { id: "D", positions: [{ row: 2, col: 3 }, { row: 3, col: 2 }] },
+            { id: "🍎", positions: [{ row: 0, col: 0 }, { row: 1, col: 1 }] },
+            { id: "🍈", positions: [{ row: 0, col: 3 }, { row: 1, col: 2 }] },
+            { id: "🍌", positions: [{ row: 2, col: 0 }, { row: 3, col: 1 }] },
+            { id: "🍇", positions: [{ row: 2, col: 3 }, { row: 3, col: 2 }] },
         ],
     },
     {
         level: 6,
         size: 4,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 0 }, { row: 3, col: 3 }] },
-            { id: "B", positions: [{ row: 0, col: 3 }, { row: 3, col: 0 }] },
-            { id: "C", positions: [{ row: 1, col: 1 }, { row: 2, col: 2 }] },
+            { id: "🍎", positions: [{ row: 0, col: 0 }, { row: 3, col: 3 }] },
+            { id: "🍈", positions: [{ row: 0, col: 3 }, { row: 3, col: 0 }] },
+            { id: "🍌", positions: [{ row: 1, col: 1 }, { row: 2, col: 2 }] },
         ],
     },
     {
         level: 7,
         size: 4,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 1 }, { row: 3, col: 1 }] },
-            { id: "B", positions: [{ row: 0, col: 2 }, { row: 3, col: 2 }] },
-            { id: "C", positions: [{ row: 1, col: 0 }, { row: 2, col: 3 }] },
+            { id: "🍎", positions: [{ row: 0, col: 1 }, { row: 3, col: 1 }] },
+            { id: "🍈", positions: [{ row: 0, col: 2 }, { row: 3, col: 2 }] },
+            { id: "🍌", positions: [{ row: 1, col: 0 }, { row: 2, col: 3 }] },
         ],
     },
     {
         level: 8,
         size: 4,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 0 }, { row: 3, col: 0 }] },
-            { id: "B", positions: [{ row: 0, col: 3 }, { row: 3, col: 3 }] },
-            { id: "C", positions: [{ row: 1, col: 1 }, { row: 2, col: 2 }] },
-            { id: "D", positions: [{ row: 1, col: 2 }, { row: 2, col: 1 }] },
+            { id: "🍎", positions: [{ row: 0, col: 0 }, { row: 3, col: 0 }] },
+            { id: "🍈", positions: [{ row: 0, col: 3 }, { row: 3, col: 3 }] },
+            { id: "🍌", positions: [{ row: 1, col: 1 }, { row: 2, col: 2 }] },
+            { id: "🍇", positions: [{ row: 1, col: 2 }, { row: 2, col: 1 }] },
         ],
     },
     {
         level: 9,
         size: 4,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 1 }, { row: 1, col: 0 }] },
-            { id: "B", positions: [{ row: 0, col: 2 }, { row: 1, col: 3 }] },
-            { id: "C", positions: [{ row: 2, col: 0 }, { row: 3, col: 1 }] },
-            { id: "D", positions: [{ row: 2, col: 3 }, { row: 3, col: 2 }] },
+            { id: "🍎", positions: [{ row: 0, col: 1 }, { row: 1, col: 0 }] },
+            { id: "🍈", positions: [{ row: 0, col: 2 }, { row: 1, col: 3 }] },
+            { id: "🍌", positions: [{ row: 2, col: 0 }, { row: 3, col: 1 }] },
+            { id: "🍇", positions: [{ row: 2, col: 3 }, { row: 3, col: 2 }] },
         ],
     },
     {
         level: 10,
         size: 4,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 0 }, { row: 3, col: 1 }] },
-            { id: "B", positions: [{ row: 0, col: 3 }, { row: 3, col: 2 }] },
-            { id: "C", positions: [{ row: 1, col: 1 }, { row: 2, col: 2 }] },
-            { id: "D", positions: [{ row: 1, col: 2 }, { row: 2, col: 1 }] },
+            { id: "🍎", positions: [{ row: 0, col: 0 }, { row: 3, col: 1 }] },
+            { id: "🍈", positions: [{ row: 0, col: 3 }, { row: 3, col: 2 }] },
+            { id: "🍌", positions: [{ row: 1, col: 1 }, { row: 2, col: 2 }] },
+            { id: "🍇", positions: [{ row: 1, col: 2 }, { row: 2, col: 1 }] },
         ],
     },
 
@@ -185,95 +186,95 @@ const levels = [
         level: 11,
         size: 5,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 0 }, { row: 4, col: 0 }] },
-            { id: "B", positions: [{ row: 0, col: 4 }, { row: 4, col: 4 }] },
-            { id: "C", positions: [{ row: 2, col: 1 }, { row: 2, col: 3 }] },
+            { id: "🍎", positions: [{ row: 0, col: 0 }, { row: 4, col: 0 }] },
+            { id: "🍈", positions: [{ row: 0, col: 4 }, { row: 4, col: 4 }] },
+            { id: "🍌", positions: [{ row: 2, col: 1 }, { row: 2, col: 3 }] },
         ],
     },
     {
         level: 12,
         size: 5,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 0 }, { row: 0, col: 4 }] },
-            { id: "B", positions: [{ row: 4, col: 0 }, { row: 4, col: 4 }] },
-            { id: "C", positions: [{ row: 1, col: 2 }, { row: 3, col: 2 }] },
+            { id: "🍎", positions: [{ row: 0, col: 0 }, { row: 0, col: 4 }] },
+            { id: "🍈", positions: [{ row: 4, col: 0 }, { row: 4, col: 4 }] },
+            { id: "🍌", positions: [{ row: 1, col: 2 }, { row: 3, col: 2 }] },
         ],
     },
     {
         level: 13,
         size: 5,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 2 }, { row: 4, col: 2 }] },
-            { id: "B", positions: [{ row: 2, col: 0 }, { row: 2, col: 4 }] },
-            { id: "C", positions: [{ row: 1, col: 1 }, { row: 3, col: 3 }] },
+            { id: "🍎", positions: [{ row: 0, col: 2 }, { row: 4, col: 2 }] },
+            { id: "🍈", positions: [{ row: 2, col: 0 }, { row: 2, col: 4 }] },
+            { id: "🍌", positions: [{ row: 1, col: 1 }, { row: 3, col: 3 }] },
         ],
     },
     {
         level: 14,
         size: 5,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 0 }, { row: 4, col: 4 }] },
-            { id: "B", positions: [{ row: 0, col: 4 }, { row: 4, col: 0 }] },
-            { id: "C", positions: [{ row: 1, col: 1 }, { row: 3, col: 3 }] },
+            { id: "🍎", positions: [{ row: 0, col: 0 }, { row: 4, col: 4 }] },
+            { id: "🍈", positions: [{ row: 0, col: 4 }, { row: 4, col: 0 }] },
+            { id: "🍌", positions: [{ row: 1, col: 1 }, { row: 3, col: 3 }] },
         ],
     },
     {
         level: 15,
         size: 5,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 0 }, { row: 4, col: 0 }] },
-            { id: "B", positions: [{ row: 0, col: 4 }, { row: 4, col: 4 }] },
-            { id: "C", positions: [{ row: 2, col: 1 }, { row: 2, col: 3 }] },
-            { id: "D", positions: [{ row: 1, col: 2 }, { row: 3, col: 2 }] },
+            { id: "🍎", positions: [{ row: 0, col: 0 }, { row: 4, col: 0 }] },
+            { id: "🍈", positions: [{ row: 0, col: 4 }, { row: 4, col: 4 }] },
+            { id: "🍌", positions: [{ row: 2, col: 1 }, { row: 2, col: 3 }] },
+            { id: "🍇", positions: [{ row: 1, col: 2 }, { row: 3, col: 2 }] },
         ],
     },
     {
         level: 16,
         size: 5,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 0 }, { row: 4, col: 4 }] },
-            { id: "B", positions: [{ row: 0, col: 4 }, { row: 4, col: 0 }] },
-            { id: "C", positions: [{ row: 1, col: 1 }, { row: 3, col: 3 }] },
-            { id: "D", positions: [{ row: 1, col: 3 }, { row: 3, col: 1 }] },
+            { id: "🍎", positions: [{ row: 0, col: 0 }, { row: 4, col: 4 }] },
+            { id: "🍈", positions: [{ row: 0, col: 4 }, { row: 4, col: 0 }] },
+            { id: "🍌", positions: [{ row: 1, col: 1 }, { row: 3, col: 3 }] },
+            { id: "🍇", positions: [{ row: 1, col: 3 }, { row: 3, col: 1 }] },
         ],
     },
     {
         level: 17,
         size: 5,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 2 }, { row: 4, col: 2 }] },
-            { id: "B", positions: [{ row: 2, col: 0 }, { row: 2, col: 4 }] },
-            { id: "C", positions: [{ row: 1, col: 1 }, { row: 3, col: 3 }] },
-            { id: "D", positions: [{ row: 1, col: 3 }, { row: 3, col: 1 }] },
+            { id: "🍎", positions: [{ row: 0, col: 2 }, { row: 4, col: 2 }] },
+            { id: "🍈", positions: [{ row: 2, col: 0 }, { row: 2, col: 4 }] },
+            { id: "🍌", positions: [{ row: 1, col: 1 }, { row: 3, col: 3 }] },
+            { id: "🍇", positions: [{ row: 1, col: 3 }, { row: 3, col: 1 }] },
         ],
     },
     {
         level: 18,
         size: 5,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 0 }, { row: 0, col: 4 }] },
-            { id: "B", positions: [{ row: 4, col: 0 }, { row: 4, col: 4 }] },
-            { id: "C", positions: [{ row: 2, col: 1 }, { row: 2, col: 3 }] },
-            { id: "D", positions: [{ row: 1, col: 2 }, { row: 3, col: 2 }] },
+            { id: "🍎", positions: [{ row: 0, col: 0 }, { row: 0, col: 4 }] },
+            { id: "🍈", positions: [{ row: 4, col: 0 }, { row: 4, col: 4 }] },
+            { id: "🍌", positions: [{ row: 2, col: 1 }, { row: 2, col: 3 }] },
+            { id: "🍇", positions: [{ row: 1, col: 2 }, { row: 3, col: 2 }] },
         ],
     },
     {
         level: 19,
         size: 5,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 0 }, { row: 4, col: 4 }] },
-            { id: "B", positions: [{ row: 0, col: 4 }, { row: 4, col: 0 }] },
-            { id: "C", positions: [{ row: 2, col: 2 }, { row: 1, col: 3 }] },
+            { id: "🍎", positions: [{ row: 0, col: 0 }, { row: 4, col: 4 }] },
+            { id: "🍈", positions: [{ row: 0, col: 4 }, { row: 4, col: 0 }] },
+            { id: "🍌", positions: [{ row: 2, col: 2 }, { row: 1, col: 3 }] },
         ],
     },
     {
         level: 20,
         size: 5,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 2 }, { row: 4, col: 2 }] },
-            { id: "B", positions: [{ row: 2, col: 0 }, { row: 2, col: 4 }] },
-            { id: "C", positions: [{ row: 1, col: 1 }, { row: 3, col: 3 }] },
-            { id: "D", positions: [{ row: 1, col: 3 }, { row: 3, col: 1 }] },
+            { id: "🍎", positions: [{ row: 0, col: 2 }, { row: 4, col: 2 }] },
+            { id: "🍈", positions: [{ row: 2, col: 0 }, { row: 2, col: 4 }] },
+            { id: "🍌", positions: [{ row: 1, col: 1 }, { row: 3, col: 3 }] },
+            { id: "🍇", positions: [{ row: 1, col: 3 }, { row: 3, col: 1 }] },
         ],
     },
 
@@ -282,51 +283,51 @@ const levels = [
         level: 21,
         size: 6,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 0 }, { row: 5, col: 5 }] },
-            { id: "B", positions: [{ row: 0, col: 5 }, { row: 5, col: 0 }] },
-            { id: "C", positions: [{ row: 1, col: 1 }, { row: 4, col: 4 }] },
-            { id: "D", positions: [{ row: 1, col: 4 }, { row: 4, col: 1 }] },
+            { id: "🍎", positions: [{ row: 0, col: 0 }, { row: 5, col: 5 }] },
+            { id: "🍈", positions: [{ row: 0, col: 5 }, { row: 5, col: 0 }] },
+            { id: "🍌", positions: [{ row: 1, col: 1 }, { row: 4, col: 4 }] },
+            { id: "🍇", positions: [{ row: 1, col: 4 }, { row: 4, col: 1 }] },
         ],
     },
     {
         level: 22,
         size: 6,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 2 }, { row: 5, col: 2 }] },
-            { id: "B", positions: [{ row: 2, col: 0 }, { row: 2, col: 5 }] },
-            { id: "C", positions: [{ row: 3, col: 0 }, { row: 3, col: 5 }] },
-            { id: "D", positions: [{ row: 0, col: 3 }, { row: 5, col: 3 }] },
+            { id: "🍎", positions: [{ row: 0, col: 2 }, { row: 5, col: 2 }] },
+            { id: "🍈", positions: [{ row: 2, col: 0 }, { row: 2, col: 5 }] },
+            { id: "🍌", positions: [{ row: 3, col: 0 }, { row: 3, col: 5 }] },
+            { id: "🍇", positions: [{ row: 0, col: 3 }, { row: 5, col: 3 }] },
         ],
     },
     {
         level: 23,
         size: 6,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 0 }, { row: 5, col: 0 }] },
-            { id: "B", positions: [{ row: 0, col: 5 }, { row: 5, col: 5 }] },
-            { id: "C", positions: [{ row: 2, col: 2 }, { row: 3, col: 3 }] },
-            { id: "D", positions: [{ row: 1, col: 1 }, { row: 4, col: 4 }] },
+            { id: "🍎", positions: [{ row: 0, col: 0 }, { row: 5, col: 0 }] },
+            { id: "🍈", positions: [{ row: 0, col: 5 }, { row: 5, col: 5 }] },
+            { id: "🍌", positions: [{ row: 2, col: 2 }, { row: 3, col: 3 }] },
+            { id: "🍇", positions: [{ row: 1, col: 1 }, { row: 4, col: 4 }] },
         ],
     },
     {
         level: 24,
         size: 6,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 1 }, { row: 5, col: 1 }] },
-            { id: "B", positions: [{ row: 0, col: 4 }, { row: 5, col: 4 }] },
-            { id: "C", positions: [{ row: 1, col: 0 }, { row: 4, col: 5 }] },
-            { id: "D", positions: [{ row: 1, col: 5 }, { row: 4, col: 0 }] },
+            { id: "🍎", positions: [{ row: 0, col: 1 }, { row: 5, col: 1 }] },
+            { id: "🍈", positions: [{ row: 0, col: 4 }, { row: 5, col: 4 }] },
+            { id: "🍌", positions: [{ row: 1, col: 0 }, { row: 4, col: 5 }] },
+            { id: "🍇", positions: [{ row: 1, col: 5 }, { row: 4, col: 0 }] },
         ],
     },
     {
         level: 25,
         size: 6,
         pairs: [
-            { id: "A", positions: [{ row: 0, col: 0 }, { row: 5, col: 5 }] },
-            { id: "B", positions: [{ row: 0, col: 5 }, { row: 5, col: 0 }] },
-            { id: "C", positions: [{ row: 2, col: 2 }, { row: 3, col: 3 }] },
-            { id: "D", positions: [{ row: 1, col: 1 }, { row: 4, col: 4 }] },
-            { id: "E", positions: [{ row: 1, col: 4 }, { row: 4, col: 1 }] },
+            { id: "🍎", positions: [{ row: 0, col: 0 }, { row: 5, col: 5 }] },
+            { id: "🍈", positions: [{ row: 0, col: 5 }, { row: 5, col: 0 }] },
+            { id: "🍌", positions: [{ row: 2, col: 2 }, { row: 3, col: 3 }] },
+            { id: "🍇", positions: [{ row: 1, col: 1 }, { row: 4, col: 4 }] },
+            { id: "🥕", positions: [{ row: 1, col: 4 }, { row: 4, col: 1 }] },
         ],
     },
 ];

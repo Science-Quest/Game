@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useTimer } from "../../utilities/timer"
 
 import GameHeader from '../../components/GameHeader'
@@ -432,12 +432,16 @@ const levels = [
 ]
 
 
-export default function App({ params }) {
+export default function BombRoadApp(params) {
     const level = params.level
     const timer = useTimer()
 
+    const carMoveSound = useRef(new Howl({src: '/sounds/car-engine.mp3'}))
+    const bombExplosionSound = useRef(new Howl({src: '/sounds/bomb-explosion.mp3'}))
+
     const [phase, setPhase] = useState("memorize") // memorize → recall → finish
     const [carPosition, setCarPosition] = useState(null)
+    const [prevCarPosition, setPrevCarPosition] = useState(null)
     const [showResultPage, setShowResultPage] = useState(false)
     const [showQuitNotification, setShowQuitNotification] = useState(false)
 
@@ -455,9 +459,9 @@ export default function App({ params }) {
         result.isFinish && {
             level: levelData.level,
             totalQuestions: levelData.safePath.length,
-            totalCorrect: getReachedSteps(carPosition, levelData.safePath),
+            totalCorrect: getReachedSteps(prevCarPosition, carPosition, levelData.safePath),
             time: timer.time,
-            score: calculatePenaltiedScore(timer.time, carPosition, levelData),
+            score: calculatePenaltiedScore(timer.time, prevCarPosition, carPosition, levelData),
         }
 
     useEffect(() => {
@@ -490,10 +494,13 @@ export default function App({ params }) {
         // check out of bounds
         if (row < 0 || col < 0 || row >= levelData.arenaSize || col >= levelData.arenaSize) return
 
+        setPrevCarPosition(carPosition)
         setCarPosition(newPos)
+        carMoveSound.current.play()
 
         // check bomb
         if (!isSafe(newPos, levelData)) {
+            bombExplosionSound.current.play()
             setPhase("finish")
         }
 
@@ -545,14 +552,25 @@ export default function App({ params }) {
     )
 }
 
-function getReachedSteps(carPosition, safePath) {
-    return safePath.findIndex(
+// START IS NOT COUNTED, BUT DESTINATION IS COUNTED
+function getReachedSteps(prevCarPosition, carPosition, safePath) {
+    let totalSteps = safePath.findIndex(
         step => step.row === carPosition?.row && step.col === carPosition?.col
     ) + 1
+
+    if (totalSteps == 0 && prevCarPosition != null) {
+        console.log(prevCarPosition)
+        totalSteps = safePath.findIndex(
+            step => step.row === prevCarPosition?.row && step.col === prevCarPosition?.col
+        ) 
+    }
+
+    console.log(totalSteps)
+    return totalSteps
 }
 
-function calculatePenaltiedScore(playTimeInSeconds, carPosition, levelData) {
-    const reachedSteps = getReachedSteps(carPosition, levelData.safePath)
+function calculatePenaltiedScore(playTimeInSeconds, prevCarPosition,  carPosition, levelData) {
+    const reachedSteps = getReachedSteps(prevCarPosition, carPosition, levelData.safePath)
     let score = calculateBaseScore(reachedSteps, levelData.safePath.length)
     const penaltyThreshold = 2 ** (levelData.arenaSize - 2)
     const penaltyByTime = Math.max(0, (playTimeInSeconds - penaltyThreshold) * 5)

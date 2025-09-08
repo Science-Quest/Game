@@ -1,5 +1,10 @@
 import { LucideRefreshCcw, LucideArrowBigRight } from "lucide-react"
+import { Link } from "react-router";
+import { useLocation } from "react-router";
+
+import { sounds } from "../utilities/sound"
 import TimeDisplay from "./TimeDisplay"
+
 
 export default function ResultPage({gameStats}) {
     const {
@@ -10,7 +15,16 @@ export default function ResultPage({gameStats}) {
         score
     } = gameStats
 
-    console.log(gameStats)
+    let soundEffect = (totalCorrect === totalQuestions) ? sounds.victory : sounds.lose
+    soundEffect.play()
+    
+
+    const currentLocation = useLocation()
+    const parts = currentLocation.pathname.split("/").filter(Boolean);     // ["games", "connect-things", "3"]
+    const base = `/${parts[0]}/${parts[1]}`;
+    const currentLevel = Number(parts[2] || 1);
+    const nextLevel = currentLevel + 1;
+
 
     return(
         <div id="result-page" className="relative h-[100vh] w-[100vw] text-light">
@@ -49,14 +63,16 @@ export default function ResultPage({gameStats}) {
                     </div>
                 </div>
                 <div className="flex flex-row w-full justify-between">
-                    <button className="flex flex-row bg-primary rounded-lg px-6 py-4 gap-x-4">
+                    <button onClick={() => window.location.reload()} className="flex flex-row bg-primary rounded-lg px-6 py-4 gap-x-4">
                         <LucideRefreshCcw strokeWidth={2.5} />
                         <p className="font-bold text-xl">RETRY</p>
                     </button>
-                    <button className="flex flex-row bg-primary rounded-lg px-6 py-4 gap-x-4">
-                        <p className="font-bold text-xl">NEXT</p>
-                        <LucideArrowBigRight strokeWidth={2.5} />
-                    </button>
+                    <Link to={level === 25? '/' : `${base}/${nextLevel}`}>
+                        <button className="flex flex-row bg-primary rounded-lg px-6 py-4 gap-x-4">
+                            <p className="font-bold text-xl">NEXT</p>
+                            <LucideArrowBigRight strokeWidth={2.5} />
+                        </button>
+                    </Link>
                 </div>
             </div>
             <div id="darken-background" className="absolute z-10 top-0 left-0 bg-black opacity-35 w-full h-full">

@@ -1,4 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState,useRef } from "react";
+import { motion } from "motion/react";
+
+const pathColors = {
+    "🍎": { light: "bg-red-200", dark: "bg-red-400" },
+    "🍌": { light: "bg-yellow-200", dark: "bg-yellow-400" },
+    "🥕": { light: "bg-orange-200", dark: "bg-orange-400" },
+    "🍇": { light: "bg-purple-200", dark: "bg-purple-400" },
+    "🍈": { light: "bg-lime-200", dark: "bg-lime-400" },
+};
+
+const fruitPulse = {
+    initial: { scale: 1 },
+    animate: { scale: [1, 1.5, 1], transition: { duration: 0.4 } },
+};
 
 // --- Pure helpers ---
 const getCellContent = (level, row, col) => {
@@ -24,8 +38,13 @@ const isAdjacent = (a, b) => {
 };
 
 export default function GameGrid({ level, phase, paths, setPaths }) {
+    
+    const boxSelectionSound = useRef(new Howl({ src: '/sounds/cancel-selection-pop.mp3'}))
+    const pathCancelationSound = useRef(new Howl({ src: '/sounds/cancel.mp3' }))
+    const finishPathSound = useRef(new Howl({src: '/sounds/select-pop.mp3'}))
+    
     const [activePath, setActivePath] = useState(null);
-
+    
     // Handle mouse release
     useEffect(() => {
         const onGlobalMouseUp = () => {
@@ -78,6 +97,7 @@ export default function GameGrid({ level, phase, paths, setPaths }) {
                 ...prev,
                 cells: prev.cells.slice(0, -1),
             }));
+            pathCancelationSound.current.play()
             return;
         }
 
@@ -117,6 +137,7 @@ export default function GameGrid({ level, phase, paths, setPaths }) {
             ...prev,
             cells: [...prev.cells, { row, col }],
         }));
+        boxSelectionSound.current.play()
     };
 
     // Finalize path
@@ -129,6 +150,9 @@ export default function GameGrid({ level, phase, paths, setPaths }) {
         // Commit only if path ends on correct image
         if (lastSymbol === activePath.id && activePath.cells.length > 1) {
             setPaths((prev) => ({ ...prev, [activePath.id]: activePath.cells }));
+            finishPathSound.current.play()
+        } else {
+            pathCancelationSound.current.play()
         }
 
         // Always clear active path
@@ -137,8 +161,11 @@ export default function GameGrid({ level, phase, paths, setPaths }) {
 
     return (
         <div
-            className="grid gap-1 select-none"
-            style={{ gridTemplateColumns: `repeat(${level.size}, 60px)` }}
+            className="grid w-full h-full max-w-md gap-1 select-none "
+            style={{
+                gridTemplateColumns: `repeat(${level.size}, 1fr)`,
+                gridTemplateRows: `repeat(${level.size}, 1fr)`, 
+            }}
             onMouseUp={finalizeActivePath}
         >
             {grid.flat().map((cell, i) => {
@@ -149,27 +176,56 @@ export default function GameGrid({ level, phase, paths, setPaths }) {
                 const isConnected = isCellInPath(paths, cell.row, cell.col);
                 isConnected ? console.log('Connected') : null
 
-                let bgClass = "bg-gray-100"; // default
-                if (content) {
-                    bgClass = "bg-yellow-200"; // images
+                // ==============================
+                const pair = level.pairs.find(p =>
+                    p.positions.some(pos => pos.row === cell.row && pos.col === cell.col)
+                );
+
+                let bgClass = "bg-white"; // default for all
+
+                if (isConnected || isActive) {
+                    if (pair) {
+                        // Fruit tile → darker color
+                        bgClass = pathColors[pair.id]?.dark || "bg-gray-400";
+                    } else {
+                        // Path tile → lighter color
+                        // Need to know which fruit started this path
+                        const pathId = Object.keys(paths).find(id =>
+                            paths[id].some(p => p.row === cell.row && p.col === cell.col)
+                        ) || activePath?.id;
+
+                        bgClass = pathColors[pathId]?.light || "bg-gray-200";
+                    }
                 }
-                if (isConnected) {
-                    bgClass = "bg-blue-300"; // connected paths override images/empty
-                }
-                if (isActive) {
-                    bgClass = "bg-green-300"; // active path overrides everything
-                }
+
+                
                 return (
-                    <div
+                    <motion.div
                         key={i}
-                        className={`w-14 h-14 flex items-center justify-center rounded-xl border text-xl font-bold ${bgClass}`}
+                        initial={{ scale: 0.8, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ duration: 0.2, ease: "easeOut" }}
+                        whileTap={{ scale: 0.9 }}
+                        className={`aspect-square flex items-center justify-center rounded-lg shadow-md backdrop-blur-sm border-2 border-gray-600 ${bgClass}`}
                         onMouseDown={() => handleStart(cell.row, cell.col)}
                         onMouseEnter={(e) => {
                             if (e.buttons === 1) handleEnter(cell.row, cell.col);
                         }}
                     >
-                        {content}
-                    </div>
+                        {pair && (
+                            <motion.span
+                                className="text-4xl sm:text-5xl"
+                                variants={fruitPulse}
+                                animate={
+                                    // Animate only when the path containing this fruit is completed
+                                    paths[pair.id] ? "animate" : "initial"
+                                }
+                            >
+                                {pair.id} {/* 🍎, 🍌, 🍈, etc. */}
+                            </motion.span>
+                        )}
+                    </motion.div>
+
                 );
             })}
         </div>

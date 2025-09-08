@@ -64,13 +64,12 @@ const OptionButton = (props) => {
 
     return (
         <div 
-            className="relative flex justify-center items-center w-[159px] h-[82px] bg-cover"
-            style={{
-                backgroundImage: `url(/images/penguin-dash/ice-type-${iceType.current}.png)`
-            }} 
+            className="relative flex justify-center items-center w-[159px] h-[82px]"
+
             onClick={isActive ? () => handleOptionButtonClick(row, col, optionsLength) : null}
         >
-            <p className="absolute top-2 font-bold" style={{visibility: `${isActive? 'visible' : 'hidden'}`}}>{option}</p>            
+            <img src={`/images/penguin-dash/ice-type-${iceType.current}.gif`} />
+            <p className="absolute top-2 text-xl font-bold" style={{visibility: `${isActive? 'visible' : 'hidden'}`}}>{option}</p>            
         </div>
     )
 }
