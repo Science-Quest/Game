@@ -1,4 +1,4 @@
-import { LucideRefreshCcw, LucideArrowBigRight } from "lucide-react"
+import { LucideRefreshCcw, LucideArrowBigRight, LucideHome } from "lucide-react"
 import { Link } from "react-router";
 import { useLocation } from "react-router";
 
@@ -28,7 +28,7 @@ export default function ResultPage({gameStats}) {
 
     return(
         <div id="result-page" className="relative h-[100vh] w-[100vw] text-light">
-            <div className="relative h-full z-20 flex flex-col items-center gap-y-8 px-8 py-12">
+            <div className="relative h-full z-20 flex flex-col items-center gap-y-4 px-8 py-12">
                 {
                     (totalCorrect === totalQuestions)? 
                     <div className="flex flex-col gap-y-2 items-center">
@@ -62,17 +62,23 @@ export default function ResultPage({gameStats}) {
                         <p>+{score} pts</p>
                     </div>
                 </div>
-                <div className="flex flex-row w-full justify-between">
-                    <button onClick={() => window.location.reload()} className="flex flex-row bg-primary rounded-lg px-6 py-4 gap-x-4">
-                        <LucideRefreshCcw strokeWidth={2.5} />
-                        <p className="font-bold text-xl">RETRY</p>
-                    </button>
-                    <Link to={level === 25? '/' : `${base}/${nextLevel}`}>
-                        <button className="flex flex-row bg-primary rounded-lg px-6 py-4 gap-x-4">
-                            <p className="font-bold text-xl">NEXT</p>
-                            <LucideArrowBigRight strokeWidth={2.5} />
+                <div className="flex flex-col mt-4 gap-y-8 w-full">
+                    <div className="flex flex-row w-full justify-between">
+                        <button onClick={() => window.location.reload()} className="flex flex-row bg-primary rounded-lg px-6 py-4 gap-x-4">
+                            <LucideRefreshCcw strokeWidth={2.5} />
+                            <p className="font-bold text-xl">RETRY</p>
                         </button>
-                    </Link>
+                        <Link to={level === 25? '/' : `${base}/${nextLevel}`}>
+                            <button className="flex flex-row bg-primary rounded-lg px-6 py-4 gap-x-4">
+                                <p className="font-bold text-xl">NEXT</p>
+                                <LucideArrowBigRight strokeWidth={2.5} />
+                            </button>
+                        </Link>
+                    </div>
+                    <button className="mx-auto flex flex-row bg-primary rounded-lg px-6 py-4 gap-x-4" onClick={() => window.location.href = 'http://sciencequest.local'}>
+                        <LucideHome strokeWidth={2.5} />
+                        <p className="font-bold text-xl">Back to home</p>
+                    </button>
                 </div>
             </div>
             <div id="darken-background" className="absolute z-10 top-0 left-0 bg-black opacity-35 w-full h-full">

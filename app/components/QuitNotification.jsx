@@ -18,7 +18,10 @@ export default function QuitNotification({closeQuitNotification}) {
                     <button className="bg-background text-dark border-2 rounded-lg w-[118px] h-[48px]" onClick={closeQuitNotification}>
                         Batal
                     </button>
-                    <button className="bg-fail text-light rounded-lg w-[118px] h-[48px]">
+                    <button 
+                        className="bg-fail text-light rounded-lg w-[118px] h-[48px]"
+                        onClick={() => window.location.href = "http://sciencequest.local"}
+                    >
                         Keluar
                     </button>
                 </div>
