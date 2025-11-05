@@ -82,13 +82,24 @@ const StartPlace = forwardRef((props, ref) => {
     )
 })
 
-const FinishPlace = ({handleClick, isFinish}) => {
-    return(
-        <div id="finish-place" className="relative flex justify-center items-center w-full max-w-[600px]" onClick={isFinish? handleClick : null}>
-            <OptionButton option={null} />
-            <img src="/images/penguin-dash/finish-flag.png" alt="Finish flag" className="absolute -top-12 left-1/2 w-[72px] h-[100px]" />
-        </div>
-    )
-}
+const FinishPlace = forwardRef(({ handleClick, isFinish }, ref) => {
+  return (
+    <div
+      ref={ref}
+      id="finish-place"
+      className="relative flex justify-center items-center w-full max-w-[600px]"
+      onClick={isFinish ? handleClick : null}
+    >
+      <OptionButton option={null} />
+      {/* center the flag properly using translate-x-1/2 */}
+      <img
+        src="/images/penguin-dash/finish-flag.png"
+        alt="Finish flag"
+        className="absolute -top-12 left-1/2 w-[72px] h-[100px] -translate-x-1/2"
+      />
+    </div>
+  )
+})
+
 
 export {OptionGroup, StartPlace, FinishPlace}

@@ -4,6 +4,7 @@ import Penguin from "./Penguin"
 import ResultNotification from "../../components/ResultNotification"
 import ResultPage from "../../components/ResultPage"
 import { useTimer } from "../../utilities/timer"
+import { Howl } from "howler"
 
 const levels = [
     {
@@ -202,6 +203,9 @@ export default function PenguinDashApp(params) {
     const [penguinPosition, setPenguinPosition] = useState({ x: 0, y: 0 })
     const [result, setResult] = useState({ isFinish: false, isCorrect: null })
     const [gameStats, setGameStats] = useState(null)
+    const [correctCount, setCorrectCount] = useState(0)
+    const finishRef = useRef()
+
 
     const startPosition = useRef()
     const gridRef = useRef()
@@ -225,15 +229,36 @@ export default function PenguinDashApp(params) {
 
     // * CHECK WHETHER THE ANSWER IS WRONG OR NOT
     useEffect(() => {
-        if (selectedOption === null) return
+    if (selectedOption === null) return
 
-        if (result.isCorrect) {
-            finishCurrentGame()
-        } else if (selectedOption !== level.questions[activeQuestion - 1].answer) {
-            setResult({ isCorrect: false, isFinish: true })
-            finishCurrentGame()
+    const isCorrect = selectedOption === level.questions[activeQuestion - 1].answer
+    const isLastQuestion = activeQuestion === totalQuestions.current
+
+    if (isCorrect) {
+        if (isLastQuestion) {
+            // Kalau soal terakhir benar → lompat ke balok finish
+            const gridWidth = gridRef.current.offsetWidth
+            const finishX = gridWidth / 2
+            const finishY = seaComponentHeight // posisi kira-kira di atas balok finish
+
+            setPenguinPosition({ x: finishX, y: finishY })
+
+            // tunggu 1 detik supaya penguin sempat "melompat"
+            setTimeout(() => {
+                setResult({ isFinish: true, isCorrect: true })
+                finishCurrentGame()
+            }, 1000)
+        } else {
+            // kalau belum soal terakhir, lanjut ke pertanyaan berikutnya
+            setResult({ isCorrect: true, isFinish: false })
         }
-    }, [selectedOption, result.isCorrect])
+    } else {
+        // kalau jawaban salah
+        setResult({ isCorrect: false, isFinish: true })
+        finishCurrentGame()
+    }
+}, [selectedOption])
+
 
     // * MAKE THE PAGE UNSCROLLABLE WHEN SHOWING RESULT NOTIFICATION
     useEffect(() => {
@@ -241,20 +266,76 @@ export default function PenguinDashApp(params) {
     }, [result.isFinish])
 
     const handleOptionButtonClick = (rowIndex, colIndex, optionsLength) => {
+    penguinJumpSound.current.play()
 
-        penguinJumpSound.current.play()
+    const selected = level.questions[rowIndex].options[colIndex]
+    const isCorrect = selected === level.questions[rowIndex].answer
+    const isLastQuestion = rowIndex === totalQuestions.current - 1
 
-        setActiveQuestion(activeQuestion + 1)
-        setSelectedOption(level.questions[rowIndex].options[colIndex])
+    // posisi klik pada grid (animasi lompatan ke es yang diklik)
+    let gridWidth = gridRef.current.offsetWidth
+    let iceWidth = gridWidth / optionsLength
+    let positionX = iceWidth / 2 + iceWidth * colIndex
+    let positionY = 2 * seaComponentHeight + seaComponentHeight * (totalQuestions.current - rowIndex - 1)
 
-        let gridWidth = gridRef.current.offsetWidth
-        let iceWidth = gridWidth / optionsLength
+    // langsung buat penguin lompat ke es yang diklik
+    setPenguinPosition({ x: positionX, y: positionY })
 
-        let positionX = iceWidth / 2 + iceWidth * colIndex
-        let positionY = 2 * seaComponentHeight + seaComponentHeight * (totalQuestions.current - rowIndex - 1)
-
-        setPenguinPosition({ x: positionX, y: positionY })
+    if (!isCorrect) {
+        // jawaban salah -> langsung game over, correctCount tidak berubah
+        setResult({ isCorrect: false, isFinish: true })
+        finishCurrentGame()
+        return
     }
+
+    // jawaban benar -> tambah hitungan benar
+    const newCorrect = correctCount + 1
+    setCorrectCount(newCorrect)
+
+    if (isLastQuestion) {
+    // beri waktu animasi lompatan ke es yang terakhir dulu (klik)
+    setTimeout(() => {
+        // safety checks
+        const gridEl = gridRef.current
+        const finishEl = finishRef.current
+
+        if (gridEl && finishEl) {
+            const gridRect = gridEl.getBoundingClientRect()
+            const finishRect = finishEl.getBoundingClientRect()
+
+            // x relatif ke grid: jarak kiri finish ke kiri grid + setengah lebar finish
+            const finishX = (finishRect.left - gridRect.left) + (finishRect.width / 2)
+
+            // Geser sedikit ke atas (penguin berdiri di atas es)
+            const finishY = (finishRect.top - gridRect.top) + (finishRect.height / 2) - 60
+
+
+            // sekarang set posisi penguin ke koordinat relatif ini
+            setPenguinPosition({ x: finishX, y: finishY })
+            console.log("gridRect:", gridRect)
+            console.log("finishRect:", finishRect)
+            console.log("computed finishX, finishY:", finishX, finishY)
+            console.log("penguinPosition before set:", penguinPosition)
+
+        } else {
+            // fallback: grid tengah bottom
+            const gridWidth = gridEl ? gridEl.offsetWidth : 0
+            setPenguinPosition({ x: gridWidth ? gridWidth / 2 : 0, y: seaComponentHeight })
+        }
+
+        // selesai game
+        setResult({ isCorrect: true, isFinish: true })
+        finishCurrentGame(newCorrect)
+    }, 700)
+} else {
+        // bukan soal terakhir -> lanjut ke soal berikutnya
+        setActiveQuestion(prev => prev + 1)
+        setSelectedOption(selected)
+        setResult({ isCorrect: true, isFinish: false })
+    }
+}
+
+
 
     const calculatePenaltiedScore = (totalQuestions, playTimeInSeconds) => {
         const MAX_SCORE_PENALTY = 300
@@ -270,17 +351,21 @@ export default function PenguinDashApp(params) {
         return Math.round((1000 * (activeQuestion - 1)) / totalQuestions.current)
     }
 
-    const finishCurrentGame = () => {
-        timer.stopTimer()
-        setTimeout(() => setShowResultPage(true), 2000)
-        setGameStats({
-            level: levelNumber,
-            totalQuestions: totalQuestions.current,
-            totalCorrect: activeQuestion - 1,
-            time: timer.time,
-            score: calculatePenaltiedScore(totalQuestions.current, timer.time),
-        })
-    }
+    const finishCurrentGame = (totalCorrectArg = null) => {
+    timer.stopTimer()
+    setTimeout(() => setShowResultPage(true), 2000)
+
+    const totalCorrect = totalCorrectArg !== null ? totalCorrectArg : correctCount
+
+    setGameStats({
+        level: levelNumber,
+        totalQuestions: totalQuestions.current,
+        totalCorrect: totalCorrect,
+        time: timer.time,
+        score: calculatePenaltiedScore(totalQuestions.current, timer.time),
+    })
+}
+
 
     if (showResultPage) {
         return <ResultPage questName={"Penguin Dash"} gameStats={gameStats} />
@@ -323,10 +408,16 @@ export default function PenguinDashApp(params) {
                     <img src="/images/penguin-dash/finish-line.png" alt="Finish line" className="w-full" />
                 </div>
                 <FinishPlace
+                    ref={finishRef}
                     handleClick={() => {
-                        setPenguinPosition({ x: startPosition.current.offsetWidth / 2, y: 0 })
-                        setActiveQuestion(activeQuestion + 1)
+                        // bila user masih ingin bisa klik manual benderanya
+                        const gridWidth = gridRef.current ? gridRef.current.offsetWidth : 0
+                        const fallbackX = gridWidth ? gridWidth / 2 : startPosition.current?.offsetWidth / 2 || 0
+                        setPenguinPosition({ x: fallbackX, y: 0 })
+                        setActiveQuestion(prev => prev + 1)
                         setResult({ isFinish: true, isCorrect: true })
+                        setCorrectCount(prev => prev + 1)
+                        finishCurrentGame(correctCount + 1)
                     }}
                     isFinish={activeQuestion === totalQuestions.current}
                 />
