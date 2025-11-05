@@ -3,7 +3,7 @@ import { OptionGroup, StartPlace, FinishPlace } from "./block-types"
 import Penguin from "./Penguin"
 import ResultNotification from "../../components/ResultNotification"
 import ResultPage from "../../components/ResultPage"
-import { useTimer } from "../../utilities/timer"
+import {useTimer} from "../../utilities/timer"
 import { Howl } from "howler"
 
 const levels = [
@@ -219,6 +219,31 @@ export default function PenguinDashApp(params) {
         return <p className="text-center mt-20 text-xl">Level {levelNumber} not found ❌</p>
     }
 
+        // * RESET STATE SETIAP GANTI LEVEL
+    // * RESET STATE SETIAP GANTI LEVEL
+useEffect(() => {
+    // Reset semua state utama agar tidak mewarisi dari level sebelumnya
+    setActiveQuestion(0)
+    setSelectedOption(null)
+    setResult({ isFinish: false, isCorrect: null })
+    setShowResultPage(false)
+    setCorrectCount(0)
+    setGameStats(null)
+    setPenguinPosition({ x: 0, y: 0 })
+
+    // Reset dan mulai timer ulang
+    timer.stopTimer()
+    timer.startTimer()
+
+    // Update jumlah soal
+    totalQuestions.current = level ? level.questions.length : 0
+
+    console.log(`Level ${levelNumber} dimulai ulang`)
+}, [levelNumber])
+
+
+
+
     // * PUT PENGUIN IN INITIAL POSITION
     useEffect(() => {
         setPenguinPosition({
@@ -236,24 +261,18 @@ export default function PenguinDashApp(params) {
 
     if (isCorrect) {
         if (isLastQuestion) {
-            // Kalau soal terakhir benar → lompat ke balok finish
             const gridWidth = gridRef.current.offsetWidth
             const finishX = gridWidth / 2
-            const finishY = seaComponentHeight // posisi kira-kira di atas balok finish
-
+            const finishY = seaComponentHeight 
             setPenguinPosition({ x: finishX, y: finishY })
-
-            // tunggu 1 detik supaya penguin sempat "melompat"
             setTimeout(() => {
                 setResult({ isFinish: true, isCorrect: true })
                 finishCurrentGame()
             }, 1000)
         } else {
-            // kalau belum soal terakhir, lanjut ke pertanyaan berikutnya
             setResult({ isCorrect: true, isFinish: false })
         }
     } else {
-        // kalau jawaban salah
         setResult({ isCorrect: false, isFinish: true })
         finishCurrentGame()
     }
@@ -271,46 +290,30 @@ export default function PenguinDashApp(params) {
     const selected = level.questions[rowIndex].options[colIndex]
     const isCorrect = selected === level.questions[rowIndex].answer
     const isLastQuestion = rowIndex === totalQuestions.current - 1
-
-    // posisi klik pada grid (animasi lompatan ke es yang diklik)
     let gridWidth = gridRef.current.offsetWidth
     let iceWidth = gridWidth / optionsLength
     let positionX = iceWidth / 2 + iceWidth * colIndex
     let positionY = 2 * seaComponentHeight + seaComponentHeight * (totalQuestions.current - rowIndex - 1)
-
-    // langsung buat penguin lompat ke es yang diklik
     setPenguinPosition({ x: positionX, y: positionY })
 
     if (!isCorrect) {
-        // jawaban salah -> langsung game over, correctCount tidak berubah
         setResult({ isCorrect: false, isFinish: true })
         finishCurrentGame()
         return
     }
-
-    // jawaban benar -> tambah hitungan benar
     const newCorrect = correctCount + 1
     setCorrectCount(newCorrect)
 
     if (isLastQuestion) {
-    // beri waktu animasi lompatan ke es yang terakhir dulu (klik)
     setTimeout(() => {
-        // safety checks
         const gridEl = gridRef.current
         const finishEl = finishRef.current
 
         if (gridEl && finishEl) {
             const gridRect = gridEl.getBoundingClientRect()
             const finishRect = finishEl.getBoundingClientRect()
-
-            // x relatif ke grid: jarak kiri finish ke kiri grid + setengah lebar finish
             const finishX = (finishRect.left - gridRect.left) + (finishRect.width / 2)
-
-            // Geser sedikit ke atas (penguin berdiri di atas es)
             const finishY = (finishRect.top - gridRect.top) + (finishRect.height / 2) - 60
-
-
-            // sekarang set posisi penguin ke koordinat relatif ini
             setPenguinPosition({ x: finishX, y: finishY })
             console.log("gridRect:", gridRect)
             console.log("finishRect:", finishRect)
@@ -318,17 +321,13 @@ export default function PenguinDashApp(params) {
             console.log("penguinPosition before set:", penguinPosition)
 
         } else {
-            // fallback: grid tengah bottom
             const gridWidth = gridEl ? gridEl.offsetWidth : 0
             setPenguinPosition({ x: gridWidth ? gridWidth / 2 : 0, y: seaComponentHeight })
         }
-
-        // selesai game
         setResult({ isCorrect: true, isFinish: true })
         finishCurrentGame(newCorrect)
     }, 700)
 } else {
-        // bukan soal terakhir -> lanjut ke soal berikutnya
         setActiveQuestion(prev => prev + 1)
         setSelectedOption(selected)
         setResult({ isCorrect: true, isFinish: false })
@@ -337,19 +336,23 @@ export default function PenguinDashApp(params) {
 
 
 
-    const calculatePenaltiedScore = (totalQuestions, playTimeInSeconds) => {
-        const MAX_SCORE_PENALTY = 300
-        const THRESHOLD_PER_QUESTION = 1
-        let score = calculateBaseScore()
-        let penaltyThreshold = THRESHOLD_PER_QUESTION * totalQuestions
-        let penaltyByTime = Math.max(0, (playTimeInSeconds - penaltyThreshold) * 5)
-        score -= Math.min(penaltyByTime, MAX_SCORE_PENALTY)
-        return Math.max(score, 0)
+    const calculatePenaltiedScore = (totalQuestions, playTimeInSeconds, totalCorrect) => {
+    const MAX_SCORE_PENALTY = 300
+    const THRESHOLD_PER_QUESTION = 1
+    let baseScore = Math.round((1000 * totalCorrect) / totalQuestions)
+    let penaltyThreshold = THRESHOLD_PER_QUESTION * totalQuestions
+    let penaltyByTime = Math.max(0, (playTimeInSeconds - penaltyThreshold) * 5)
+    let finalScore = baseScore - Math.min(penaltyByTime, MAX_SCORE_PENALTY)
+    return Math.max(finalScore, 0)
+}
+
+
+
+
+    const calculateBaseScore = (totalCorrectArg = correctCount) => {
+         return Math.round((1000 * totalCorrectArg) / totalQuestions.current)
     }
 
-    const calculateBaseScore = () => {
-        return Math.round((1000 * (activeQuestion - 1)) / totalQuestions.current)
-    }
 
     const finishCurrentGame = (totalCorrectArg = null) => {
     timer.stopTimer()
@@ -362,9 +365,11 @@ export default function PenguinDashApp(params) {
         totalQuestions: totalQuestions.current,
         totalCorrect: totalCorrect,
         time: timer.time,
-        score: calculatePenaltiedScore(totalQuestions.current, timer.time),
+        score: calculatePenaltiedScore(totalQuestions.current, timer.time, totalCorrect),
     })
-}
+    }
+    
+    
 
 
     if (showResultPage) {
@@ -410,7 +415,6 @@ export default function PenguinDashApp(params) {
                 <FinishPlace
                     ref={finishRef}
                     handleClick={() => {
-                        // bila user masih ingin bisa klik manual benderanya
                         const gridWidth = gridRef.current ? gridRef.current.offsetWidth : 0
                         const fallbackX = gridWidth ? gridWidth / 2 : startPosition.current?.offsetWidth / 2 || 0
                         setPenguinPosition({ x: fallbackX, y: 0 })
