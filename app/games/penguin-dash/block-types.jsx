@@ -64,13 +64,12 @@ const OptionButton = (props) => {
 
     return (
         <div 
-            className="relative flex justify-center items-center w-[159px] h-[82px] bg-cover"
-            style={{
-                backgroundImage: `url(/assets/penguin-dash/ice-type-${iceType.current}.png)`
-            }} 
+            className="relative flex justify-center items-center w-[159px] h-[82px]"
+
             onClick={isActive ? () => handleOptionButtonClick(row, col, optionsLength) : null}
         >
-            <p className="absolute top-2 font-bold" style={{visibility: `${isActive? 'visible' : 'hidden'}`}}>{option}</p>            
+            <img src={`/images/penguin-dash/ice-type-${iceType.current}.gif`} />
+            <p className="absolute top-2 text-xl font-bold" style={{visibility: `${isActive? 'visible' : 'hidden'}`}}>{option}</p>            
         </div>
     )
 }
@@ -87,7 +86,7 @@ const FinishPlace = ({handleClick, isFinish}) => {
     return(
         <div id="finish-place" className="relative flex justify-center items-center w-full max-w-[600px]" onClick={isFinish? handleClick : null}>
             <OptionButton option={null} />
-            <img src="/assets/penguin-dash/finish-flag.png" alt="Finish flag" className="absolute -top-12 left-1/2 w-[72px] h-[100px]" />
+            <img src="/images/penguin-dash/finish-flag.png" alt="Finish flag" className="absolute -top-12 left-1/2 w-[72px] h-[100px]" />
         </div>
     )
 }

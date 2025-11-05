@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-export function useTimer(run = true, interval = 1000) {
+function useTimer(run = true, interval = 1000) {
     const [time, setTime] = useState(0);
     const startRef = useRef(Date.now());
 
@@ -23,3 +23,8 @@ export function useTimer(run = true, interval = 1000) {
 
     return {time, stopTimer : () => setIsRunning(false)};
 }
+
+
+
+
+export {useTimer}

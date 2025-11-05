@@ -10,6 +10,7 @@
   "dependencies": {
     "@react-router/node": "^7.7.1",
     "@react-router/serve": "^7.7.1",
+    "howler": "^2.2.4",
     "isbot": "^5.1.27",
     "lucide-react": "^0.541.0",
     "motion": "^12.23.12",
