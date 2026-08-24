@@ -21,7 +21,7 @@ export default function ResultNotification({ isCorrect }) {
                 {isCorrect ? (
                     <>
                         <img src="/images/success-quest.png" alt="" />
-                        <p className="font-bold text-xl">BENAR</p>
+                        <p className="font-bold text-xl">FINISH</p>
                     </>
                 ) : (
                     <>

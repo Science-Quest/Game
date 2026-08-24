@@ -3,8 +3,7 @@ import { useEffect, useRef, useState } from "react";
 function useTimer(run = true, interval = 1000) {
     const [time, setTime] = useState(0);
     const startRef = useRef(Date.now());
-
-    const [isRunning, setIsRunning] = useState(run)
+    const [isRunning, setIsRunning] = useState(run);
 
     useEffect(() => {
         if (!isRunning) return;
@@ -17,14 +16,15 @@ function useTimer(run = true, interval = 1000) {
         return () => clearInterval(id);
     }, [isRunning, interval]);
 
-    // useEffect(() => {
-    //     console.log(time)
-    // }, [time])
+    const startTimer = () => {
+        startRef.current = Date.now();
+        setIsRunning(true);
+        setTime(0);
+    };
 
-    return {time, stopTimer : () => setIsRunning(false)};
+    const stopTimer = () => setIsRunning(false);
+
+    return { time, startTimer, stopTimer };
 }
 
-
-
-
-export {useTimer}
+export { useTimer };

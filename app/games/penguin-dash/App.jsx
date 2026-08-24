@@ -4,6 +4,7 @@ import Penguin from "./Penguin";
 import ResultNotification from "../../components/ResultNotification";
 import ResultPage from "../../components/ResultPage";
 import { useTimer } from "../../utilities/timer";
+import { Howl } from "howler";
 
 const levels = [
   {
@@ -345,6 +346,8 @@ export default function PenguinDashApp(params) {
   const [penguinPosition, setPenguinPosition] = useState({ x: 0, y: 0 });
   const [result, setResult] = useState({ isFinish: false, isCorrect: null });
   const [gameStats, setGameStats] = useState(null);
+  const [correctCount, setCorrectCount] = useState(0);
+  const finishRef = useRef();
 
   const startPosition = useRef();
   const gridRef = useRef();
@@ -362,6 +365,28 @@ export default function PenguinDashApp(params) {
     );
   }
 
+  // * RESET STATE SETIAP GANTI LEVEL
+  // * RESET STATE SETIAP GANTI LEVEL
+  useEffect(() => {
+    // Reset semua state utama agar tidak mewarisi dari level sebelumnya
+    setActiveQuestion(0);
+    setSelectedOption(null);
+    setResult({ isFinish: false, isCorrect: null });
+    setShowResultPage(false);
+    setCorrectCount(0);
+    setGameStats(null);
+    setPenguinPosition({ x: 0, y: 0 });
+
+    // Reset dan mulai timer ulang
+    timer.stopTimer();
+    timer.startTimer();
+
+    // Update jumlah soal
+    totalQuestions.current = level ? level.questions.length : 0;
+
+    console.log(`Level ${levelNumber} dimulai ulang`);
+  }, [levelNumber]);
+
   // * PUT PENGUIN IN INITIAL POSITION
   useEffect(() => {
     setPenguinPosition({
@@ -374,13 +399,28 @@ export default function PenguinDashApp(params) {
   useEffect(() => {
     if (selectedOption === null) return;
 
-    if (result.isCorrect) {
-      finishCurrentGame();
-    } else if (selectedOption !== level.questions[activeQuestion - 1].answer) {
+    const isCorrect =
+      selectedOption === level.questions[activeQuestion - 1].answer;
+    const isLastQuestion = activeQuestion === totalQuestions.current;
+
+    if (isCorrect) {
+      if (isLastQuestion) {
+        const gridWidth = gridRef.current.offsetWidth;
+        const finishX = gridWidth / 2;
+        const finishY = seaComponentHeight;
+        setPenguinPosition({ x: finishX, y: finishY });
+        setTimeout(() => {
+          setResult({ isFinish: true, isCorrect: true });
+          finishCurrentGame();
+        }, 1000);
+      } else {
+        setResult({ isCorrect: true, isFinish: false });
+      }
+    } else {
       setResult({ isCorrect: false, isFinish: true });
       finishCurrentGame();
     }
-  }, [selectedOption, result.isCorrect]);
+  }, [selectedOption]);
 
   // * MAKE THE PAGE UNSCROLLABLE WHEN SHOWING RESULT NOTIFICATION
   useEffect(() => {
@@ -390,47 +430,94 @@ export default function PenguinDashApp(params) {
   const handleOptionButtonClick = (rowIndex, colIndex, optionsLength) => {
     penguinJumpSound.current.play();
 
-    setActiveQuestion(activeQuestion + 1);
-    setSelectedOption(level.questions[rowIndex].options[colIndex]);
-
+    const selected = level.questions[rowIndex].options[colIndex];
+    const isCorrect = selected === level.questions[rowIndex].answer;
+    const isLastQuestion = rowIndex === totalQuestions.current - 1;
     let gridWidth = gridRef.current.offsetWidth;
     let iceWidth = gridWidth / optionsLength;
-
     let positionX = iceWidth / 2 + iceWidth * colIndex;
     let positionY =
       2 * seaComponentHeight +
       seaComponentHeight * (totalQuestions.current - rowIndex - 1);
-
     setPenguinPosition({ x: positionX, y: positionY });
+
+    if (!isCorrect) {
+      setResult({ isCorrect: false, isFinish: true });
+      finishCurrentGame();
+      return;
+    }
+    const newCorrect = correctCount + 1;
+    setCorrectCount(newCorrect);
+
+    if (isLastQuestion) {
+      setTimeout(() => {
+        const gridEl = gridRef.current;
+        const finishEl = finishRef.current;
+
+        if (gridEl && finishEl) {
+          const gridRect = gridEl.getBoundingClientRect();
+          const finishRect = finishEl.getBoundingClientRect();
+          const finishX =
+            finishRect.left - gridRect.left + finishRect.width / 2;
+          const finishY =
+            finishRect.top - gridRect.top + finishRect.height / 2 - 60;
+          setPenguinPosition({ x: finishX, y: finishY });
+          console.log("gridRect:", gridRect);
+          console.log("finishRect:", finishRect);
+          console.log("computed finishX, finishY:", finishX, finishY);
+          console.log("penguinPosition before set:", penguinPosition);
+        } else {
+          const gridWidth = gridEl ? gridEl.offsetWidth : 0;
+          setPenguinPosition({
+            x: gridWidth ? gridWidth / 2 : 0,
+            y: seaComponentHeight,
+          });
+        }
+        setResult({ isCorrect: true, isFinish: true });
+        finishCurrentGame(newCorrect);
+      }, 700);
+    } else {
+      setActiveQuestion((prev) => prev + 1);
+      setSelectedOption(selected);
+      setResult({ isCorrect: true, isFinish: false });
+    }
   };
 
-  useEffect(() => {
-    console.log(activeQuestion);
-  }, [activeQuestion]);
-
-  const calculatePenaltiedScore = (totalQuestions, playTimeInSeconds) => {
+  const calculatePenaltiedScore = (
+    totalQuestions,
+    playTimeInSeconds,
+    totalCorrect3
+  ) => {
     const MAX_SCORE_PENALTY = 300;
     const THRESHOLD_PER_QUESTION = 1;
-    let score = calculateBaseScore();
+    let baseScore = Math.round((1000 * totalCorrect) / totalQuestions);
     let penaltyThreshold = THRESHOLD_PER_QUESTION * totalQuestions;
     let penaltyByTime = Math.max(0, (playTimeInSeconds - penaltyThreshold) * 5);
-    score -= Math.min(penaltyByTime, MAX_SCORE_PENALTY);
-    return Math.max(score, 0);
+    let finalScore = baseScore - Math.min(penaltyByTime, MAX_SCORE_PENALTY);
+    return Math.max(finalScore, 0);
   };
 
-  const calculateBaseScore = () => {
-    return Math.round((1000 * (activeQuestion - 1)) / totalQuestions.current);
+  const calculateBaseScore = (totalCorrectArg = correctCount) => {
+    return Math.round((1000 * totalCorrectArg) / totalQuestions.current);
   };
 
-  const finishCurrentGame = () => {
+  const finishCurrentGame = (totalCorrectArg = null) => {
     timer.stopTimer();
     setTimeout(() => setShowResultPage(true), 2000);
+
+    const totalCorrect =
+      totalCorrectArg !== null ? totalCorrectArg : correctCount;
+
     setGameStats({
       level: levelNumber,
       totalQuestions: totalQuestions.current,
-      totalCorrect: activeQuestion - 1,
+      totalCorrect: totalCorrect,
       time: timer.time,
-      score: calculatePenaltiedScore(totalQuestions.current, timer.time),
+      score: calculatePenaltiedScore(
+        totalQuestions.current,
+        timer.time,
+        totalCorrect
+      ),
     });
   };
 
@@ -441,21 +528,18 @@ export default function PenguinDashApp(params) {
   return (
     <div>
       {result.isFinish && <ResultNotification isCorrect={result.isCorrect} />}
-      {activeQuestion >= totalQuestions.current ? null : (
-        <div
-          id="question"
-          className="fixed z-50 flex items-center justify-center  top-4 left-1/2 -translate-x-1/2 w-[90%] min-h-24 rounded-lg bg-background ring-4 text-dark text-xl font-semibold p-4"
-        >
-          {activeQuestion >= totalQuestions.current ? (
-            <button className="flex flex-row bg-primary rounded-lg px-6 py-4 gap-x-4">
-              <p className="font-bold text-xl">FINISH</p>
-            </button>
-          ) : (
-            level.questions[activeQuestion].question
-          )}
-        </div>
-      )}
-
+      <div
+        id="question"
+        className="fixed z-50 flex items-center justify-center  top-4 left-1/2 -translate-x-1/2 w-[90%] min-h-24 rounded-lg bg-background ring-4 text-dark text-xl font-semibold p-4"
+      >
+        {activeQuestion >= totalQuestions.current ? (
+          <button className="flex flex-row bg-primary rounded-lg px-6 py-4 gap-x-4">
+            <p className="font-bold text-xl">FINISH</p>
+          </button>
+        ) : (
+          level.questions[activeQuestion].question
+        )}
+      </div>
       <img
         src="/images/penguin-dash/ice-wall.png"
         alt="Ice Wall"
@@ -488,13 +572,17 @@ export default function PenguinDashApp(params) {
           />
         </div>
         <FinishPlace
+          ref={finishRef}
           handleClick={() => {
-            setPenguinPosition({
-              x: startPosition.current.offsetWidth / 2,
-              y: 0,
-            });
-            setActiveQuestion(activeQuestion + 1);
+            const gridWidth = gridRef.current ? gridRef.current.offsetWidth : 0;
+            const fallbackX = gridWidth
+              ? gridWidth / 2
+              : startPosition.current?.offsetWidth / 2 || 0;
+            setPenguinPosition({ x: fallbackX, y: 0 });
+            setActiveQuestion((prev) => prev + 1);
             setResult({ isFinish: true, isCorrect: true });
+            setCorrectCount((prev) => prev + 1);
+            finishCurrentGame(correctCount + 1);
           }}
           isFinish={activeQuestion === totalQuestions.current}
         />
